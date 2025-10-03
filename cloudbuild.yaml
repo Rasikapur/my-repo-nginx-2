@@ -1,33 +1,11 @@
 steps:
-  # Step 1: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0',
-        '.'
-      ]
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/myapp:latest', '.']
 
-  # Step 2: Push Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'push',
-        'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0'
-      ]
+    args: ['push', 'gcr.io/$PROJECT_ID/myapp:latest']
 
-  # Step 3: Deploy to GKE (optional)
-  # - name: 'gcr.io/cloud-builders/kubectl'
-  #   args:
-  #     [
-  #       'apply',
-  #       '-f',
-  #       'nginx-deployment.yaml'
-  #     ]
-  #   env:
-  #     - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  #     - 'CLOUDSDK_CONTAINER_CLUSTER=rasi'
+serviceAccount: projects/$PROJECT_ID/serviceAccounts/my-sa@${PROJECT_ID}.iam.gserviceaccount.com
 
-images:
-  - 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0'
+options:
+  logging: CLOUD_LOGGING_ONLY
