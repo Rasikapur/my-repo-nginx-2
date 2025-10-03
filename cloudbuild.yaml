@@ -1,11 +1,15 @@
 steps:
+  # Step 1: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/myapp:latest', '.']
+    args: ['build', '-t', 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0', '.']
 
+  # Step 2: Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/myapp:latest']
+    args: ['push', 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0']
 
-serviceAccount: projects/$PROJECT_ID/serviceAccounts/my-sa@${PROJECT_ID}.iam.gserviceaccount.com
+# Use your custom build service account
+serviceAccount: projects/sunlit-utility-472416-v9/serviceAccounts/sunlit-utility-472416-v9@appspot.gserviceaccount.com
 
+# Logging options (ensures logs are visible in Cloud Logging)
 options:
   logging: CLOUD_LOGGING_ONLY
