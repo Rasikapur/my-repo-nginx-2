@@ -1,15 +1,34 @@
+# cloudbuild.yaml
 steps:
   # Step 1: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0', '.']
+    args:
+      [
+        'build',
+        '-t',
+        'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0',
+        '.'
+      ]
 
-  # Step 2: Push Docker image
+  # Step 2: Push Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0']
+    args:
+      [
+        'push',
+        'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0'
+      ]
 
-# Use your custom build service account
-serviceAccount: projects/sunlit-utility-472416-v9/serviceAccounts/sunlit-utility-472416-v9@appspot.gserviceaccount.com
+  # Step 3: Deploy to GKE
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      [
+        'apply',
+        '-f',
+        'nginx-deployment.yaml'
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=rasi'
 
-# Logging options (ensures logs are visible in Cloud Logging)
-options:
-  logging: CLOUD_LOGGING_ONLY
+images:
+  - 'us-east1-docker.pkg.dev/sunlit-utility-472416-v9/my-docker-repo/nginx/my-nginx:1.0'
